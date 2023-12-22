@@ -25,6 +25,7 @@ jobs:
         with:
           images: randombyte/nextcloud-imap
           tags: type=sha
+          flavor: latest=true
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5.1.0
