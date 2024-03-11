@@ -1,6 +1,6 @@
 # Add IMAP support to nextcloud image
 # Derived from https://github.com/nextcloud/docker/blob/8afd97014cc3445e888a165f8c2d16af7ed036aa/.examples/dockerfiles/imap/apache/Dockerfile
-FROM nextcloud:27.1.5-apache
+FROM nextcloud:28.0.3-apache
 
 RUN set -ex; \
     \
