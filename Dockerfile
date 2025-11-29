@@ -1,6 +1,6 @@
 # Add IMAP support to nextcloud image
 # Derived from https://github.com/nextcloud/docker/blob/8afd97014cc3445e888a165f8c2d16af7ed036aa/.examples/dockerfiles/imap/apache/Dockerfile
-FROM nextcloud:30.0.16-apache
+FROM nextcloud:30.0.17-apache
 
 RUN set -ex; \
     \
@@ -8,7 +8,7 @@ RUN set -ex; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-        libc-client-dev \
+        # libc-client-dev \ # Throws error with Debian Trixie
         libkrb5-dev \
     ; \
     \
