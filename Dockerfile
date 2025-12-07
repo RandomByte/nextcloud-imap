@@ -9,6 +9,7 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         # libc-client-dev \ # Throws error with Debian Trixie
+        libc-client2007e-dev \
         libkrb5-dev \
     ; \
     \
