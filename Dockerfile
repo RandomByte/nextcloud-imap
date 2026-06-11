@@ -1,6 +1,6 @@
 # Add IMAP support to nextcloud image
 # Derived from https://github.com/nextcloud/docker/blob/8afd97014cc3445e888a165f8c2d16af7ed036aa/.examples/dockerfiles/imap/apache/Dockerfile
-FROM nextcloud:33.0.5-apache
+FROM nextcloud:34.0.0-apache
 
 # libc-client-dev was removed in Debian Trixie, so pull it from the archived Buster repo.
 # PHP 8.4 (shipped with Nextcloud 33) unbundled IMAP from core; install via PECL instead.
