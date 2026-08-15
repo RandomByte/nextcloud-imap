@@ -9,6 +9,8 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v7
@@ -35,3 +37,35 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Read Nextcloud version from the base image
+        id: nextcloud
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^FROM nextcloud:\(.*\)-apache$/\1/p' Dockerfile)"
+          if [ -z "$version" ]; then
+            echo "No 'FROM nextcloud:<version>-apache' line found in Dockerfile" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_TAG: ${{ steps.meta.outputs.version }}
+          NEXTCLOUD_VERSION: ${{ steps.nextcloud.outputs.version }}
+        run: |
+          set -euo pipefail
+          tag="v${NEXTCLOUD_VERSION}-${IMAGE_TAG}"
+          # Re-runs of the workflow build the same commit, so the release may already exist.
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists, skipping."
+            exit 0
+          fi
+          notes="$(printf '%s\n%s\n' \
+            "Image tag: \`randombyte/nextcloud-imap:${IMAGE_TAG}\`, also pushed as \`randombyte/nextcloud-imap:latest\`" \
+            "Nextcloud version: \`${NEXTCLOUD_VERSION}\`, from base image \`nextcloud:${NEXTCLOUD_VERSION}-apache\`")"
+          gh release create "$tag" \
+            --target "${GITHUB_SHA}" \
+            --title "Nextcloud ${NEXTCLOUD_VERSION} (${IMAGE_TAG})" \
+            --notes "$notes"
